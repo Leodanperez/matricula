@@ -2,7 +2,9 @@
 
 import FeatherIcon from "feather-icons-react";
 import { FormEvent, useState } from "react";
+import { ToastContainer } from "react-toastify";
 import { Button, Form, InputGroup, Modal } from "react-bootstrap";
+import showToast from "../components/utils/toastify";
 
 export default function Banco() {
   //Variable booleano
@@ -27,6 +29,7 @@ export default function Banco() {
 
   const handleGuardar = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    showToast({message: 'Hola', type: 'success'})
     console.log(banco);
   }
 
@@ -152,6 +155,7 @@ export default function Banco() {
           </Modal.Footer>
         </Form>
       </Modal>
+      <ToastContainer />
     </>
   );
 }
