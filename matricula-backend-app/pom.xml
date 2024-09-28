@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>pe.edu.trentino</groupId>
-	<artifactId>matricula-backend-app</artifactId>
+	<artifactId>matricula-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>matricula-backend-app</name>
-	<description>Sistema de Matricula School</description>
+	<name>matricula-backend</name>
+	<description>Sistema de matricula</description>
 	<url/>
 	<licenses>
 		<license/>

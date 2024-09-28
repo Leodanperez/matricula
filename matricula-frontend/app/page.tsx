@@ -1,123 +1,49 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { Button, Modal } from "react-bootstrap";
+import FeatherIcon from "feather-icons-react";
+import { useState } from "react";
+import Header from "./components/header";
+import Navbar from "./components/nav";
 
-const axiosInstance = axios.create({
-  baseURL: "http://localhost:5454",
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
-
-type IBanco = {
-  id: number;
-  nombre: string;
-  direccion: string;
-  codigo: string;
-};
-
-export default function Home() {
-  //variable
-  const [bancos, setBancos] = useState<IBanco[] | null>(null);
-  const [openModal, setOpenModal] = useState(false);
-  const [banco, setBanco] = useState({
-    nombre: "",
-    direccion: "",
-    codigo: "",
-  });
-
-  const handleCerrar = () => setOpenModal(false);
-  const handleAbrirModal = () => setOpenModal(true);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setBanco({ ...banco, [name]: value.toUpperCase() });
-  };
-
-  useEffect(() => {
-    //funcion de flecha
-    const obtenerBancos = async () => {
-      try {
-        const response = await axiosInstance("/obtner-bancos", {});
-        // Asignar valor a la variable setBancos
-        setBancos(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    obtenerBancos();
-  }, []);
+export default function Page() {
 
   return (
-    <>
-      <div>
-        <button className="btn btn-outline-primary" onClick={handleAbrirModal}>
-          Agregar banco
-        </button>
-        <table className="table">
+    <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+      <div
+        className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 className="h2">Dashboard</h1>
+      </div>
+
+      <div className="table-responsive small">
+        <table className="table table-striped table-sm">
           <thead>
             <tr>
               <th scope="col">#</th>
-              <th scope="col">Nombre</th>
-              <th scope="col">Direccion</th>
-              <th scope="col">Codigo</th>
+              <th scope="col">Header</th>
+              <th scope="col">Header</th>
+              <th scope="col">Header</th>
+              <th scope="col">Header</th>
             </tr>
           </thead>
           <tbody>
-            {bancos?.map((valor, index) => (
-              <tr key={index}>
-                <th scope="row">{valor.id}</th>
-                <td>{valor.nombre}</td>
-                <td>{valor.direccion}</td>
-                <td>{valor.codigo}</td>
-              </tr>
-            ))}
+            <tr>
+              <td>1,001</td>
+              <td>random</td>
+              <td>data</td>
+              <td>placeholder</td>
+              <td>text</td>
+            </tr>
+            <tr>
+              <td>1,002</td>
+              <td>placeholder</td>
+              <td>irrelevant</td>
+              <td>visual</td>
+              <td>layout</td>
+            </tr>
           </tbody>
         </table>
       </div>
+    </main>
 
-      <Modal show={openModal} onHide={handleCerrar}>
-        <Modal.Header closeButton>
-          <Modal.Title>Agregar Banco</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <input
-            type="text"
-            className="form-control shadow-none"
-            placeholder="Ingrese banco"
-            id="nombre"
-            name="nombre"
-            value={banco.nombre}
-          />
-          <input
-            type="text"
-            className="form-control shadow-none"
-            placeholder="Ingrese direccion"
-            id="direccion"
-            name="direccion"
-            value={banco.direccion}
-          />
-          <input
-            type="text"
-            className="form-control shadow-none"
-            placeholder="Ingrese codigo"
-            id="codigo"
-            name="codigo"
-            value={banco.codigo}
-          />
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="outline-danger" onClick={handleCerrar}>
-            Cerrar
-          </Button>
-          <Button variant="outline-primary" onClick={handleCerrar}>
-            Guardar
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </>
-  );
+  )
 }

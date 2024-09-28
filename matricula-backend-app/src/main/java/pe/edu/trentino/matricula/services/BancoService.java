@@ -7,5 +7,7 @@ import java.util.List;
 
 public interface BancoService {
     void crearBanco(BancoDto bancoDto);
+    void actualizarBanco(Long id, BancoDto bancoDto);
     List<Banco> obtenerBancos();
+    boolean eliminarBanco(Long id);
 }
