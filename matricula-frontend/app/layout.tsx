@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Header from "./components/header";
 import Navbar from "./components/nav";
-import './globals.css';
+import "./globals.css";
 import "react-toastify/dist/ReactToastify.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -25,7 +25,9 @@ export default function RootLayout({
         <div className="container-fluid">
           <div className="row">
             <Navbar />
-            {children}
+            <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+              {children}
+            </main>
           </div>
         </div>
       </body>
