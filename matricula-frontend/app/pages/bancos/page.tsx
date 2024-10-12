@@ -9,6 +9,7 @@ import {
   InputGroup,
   Modal,
   Pagination,
+  Spinner,
   Table,
 } from "react-bootstrap";
 import showToast from "@/app/components/utils/toastify";
@@ -25,6 +26,11 @@ type IBanco = {
   codigo: string;
 };
 
+type DtoResponse = {
+  status: number;
+  message: string;
+};
+
 interface Banco {
   data: IBanco[];
   page: number;
@@ -35,8 +41,8 @@ interface Banco {
 
 export default function Banco() {
   const [show, setShow] = useState<boolean>(false);
-  const [titulo, setTitulo] = useState<string>("");
   const [esModoEditar, setEsModoEditar] = useState<boolean>(false);
+  const [validated, setValidated] = useState<boolean>(false);
 
   const [listadoBancos, setListadoBancos] = useState<IBanco[] | null>(null);
   const [buscar, setBuscar] = useState<string>("");
@@ -56,7 +62,13 @@ export default function Banco() {
 
   const handleClose = () => {
     setShow(false);
-    setTitulo("");
+    setEsModoEditar(false);
+    setValidated(false);
+    setBanco({
+      nombre: "",
+      direccion: "",
+      codigo: "",
+    });
   };
 
   const obtenerListadoBancos = useCallback(
@@ -94,9 +106,29 @@ export default function Banco() {
   };
 
   const handleGuardar = async (e: FormEvent<HTMLFormElement>) => {
+    const form = e.currentTarget;
+    if (form.checkValidity() === false) {
+      e.preventDefault();
+      e.stopPropagation();
+      setValidated(true);
+
+      /* if (!banco.nombre || !banco.direccion || !banco.codigo) {
+        showToast({ message: "Campos obligatorios", type: "warning" });
+      } */
+      return;
+    }
     e.preventDefault();
-    showToast({ message: "Hola", type: "success" });
-    console.log(banco);
+    try {
+      const resultado = await fetchData<DtoResponse>("/crear-banco", {
+        method: "POST",
+        data: banco,
+      });
+      showToast({ message: resultado.message, type: "success" });
+      handleClose();
+      obtenerListadoBancos(buscar, page);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleShow = () => {
@@ -156,27 +188,39 @@ export default function Banco() {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td className="centered-cell">1</td>
-              <td className="centered-cell">BCP</td>
-              <td className="centered-cell">LIMA-PACHACAMAC</td>
-              <td className="centered-cell">BCP2024</td>
-              <td className="text-center centered-cell">
-                <Button
-                  variant="primary-outline"
-                  className="btn btn-outline-primary btn-sm"
-                >
-                  <FeatherIcon icon="edit-2" />
-                </Button>
-                <Button
-                  variant="danger-outline"
-                  className="btn btn-outline-danger btn-sm ms-2"
-                  onClick={handleEliminar}
-                >
-                  <FeatherIcon icon="trash" />
-                </Button>
-              </td>
-            </tr>
+            {listadoBancos ? (
+              listadoBancos.map((banco, index) => (
+                <tr key={banco.id}>
+                  <td className="centered-cell">
+                    {(page - 1) * perPage + index + 1}
+                  </td>
+                  <td className="centered-cell">{banco.nombre}</td>
+                  <td className="centered-cell">{banco.direccion}</td>
+                  <td className="centered-cell">{banco.codigo}</td>
+                  <td className="text-center centered-cell">
+                    <Button
+                      variant="primary-outline"
+                      className="btn btn-outline-primary btn-sm"
+                    >
+                      <FeatherIcon icon="edit-2" />
+                    </Button>
+                    <Button
+                      variant="danger-outline"
+                      className="btn btn-outline-danger btn-sm ms-2"
+                      onClick={handleEliminar}
+                    >
+                      <FeatherIcon icon="trash" />
+                    </Button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={5} className="text-center">
+                  <Spinner animation="border" variant="primary" />
+                </td>
+              </tr>
+            )}
           </tbody>
         </Table>
         <Paginator
@@ -197,7 +241,7 @@ export default function Banco() {
             {esModoEditar ? "Editar Banco" : "Agregar Banco"}
           </Modal.Title>
         </Modal.Header>
-        <Form noValidate onSubmit={handleGuardar}>
+        <Form noValidate validated={validated} onSubmit={handleGuardar}>
           <Modal.Body>
             <Form.Label className="form-label">BANCO</Form.Label>
             <InputGroup className="mb-3">
@@ -213,6 +257,9 @@ export default function Banco() {
                 onChange={handleChange}
                 required
               />
+              <Form.Control.Feedback type="invalid">
+                Por favor ingrese el nombre del banco
+              </Form.Control.Feedback>
             </InputGroup>
 
             <Form.Label className="form-label">DIRECCIÓN</Form.Label>
@@ -228,6 +275,9 @@ export default function Banco() {
                 onChange={handleChange}
                 required
               />
+              <Form.Control.Feedback type="invalid">
+                Por favor ingrese la direccion
+              </Form.Control.Feedback>
             </InputGroup>
 
             <Form.Label className="form-label">CODIGO</Form.Label>
@@ -243,10 +293,17 @@ export default function Banco() {
                 onChange={handleChange}
                 required
               />
+              <Form.Control.Feedback type="invalid">
+                Por favor ingrese el codigo del banco
+              </Form.Control.Feedback>
             </InputGroup>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="outline-danger" type="submit">
+            <Button
+              variant="outline-danger"
+              type="button"
+              onClick={handleClose}
+            >
               Cerrar
             </Button>
             <Button variant="outline-primary" type="submit">
