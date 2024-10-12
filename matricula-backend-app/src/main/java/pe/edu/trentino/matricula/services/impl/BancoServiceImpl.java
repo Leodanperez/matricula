@@ -87,15 +87,36 @@ public class BancoServiceImpl implements BancoService {
 
         try {
             Optional<Banco> optionalBanco = bancoRepository.findById(id);
-        } catch (Exception e) {
+            if (optionalBanco.isPresent()) {
+                var banco = optionalBanco.get();
+                banco.setNombre(bancoDto.getNombre());
+                banco.setDireccion(bancoDto.getDireccion());
+                banco.setCodigo(bancoDto.getCodigo());
+                bancoRepository.save(banco);
 
+                response.setStatus(200);
+                response.setMessage("Banco actualizado correctamente");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        return null;
+        return response;
     }
 
     @Override
     public ResponseDto eliminarBanco(Long id) {
-        return null;
+        var response = new ResponseDto();
+        try {
+            Optional<Banco> optionalBanco = bancoRepository.findById(id);
+            if (optionalBanco.isPresent()) {
+                bancoRepository.deleteById(id);
+                response.setStatus(200);
+                response.setMessage("Banco eliminado correctamente");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return response;
     }
 
 }

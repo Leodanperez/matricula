@@ -34,4 +34,14 @@ public class BancoController {
         return ResponseEntity
                 .ok(bancoService.obtenerBancos(nombre, page, perPage));
     }
+
+    @PutMapping("/editar-banco/{bancoId}")
+    public ResponseDto editarBanco(@PathVariable(name = "bancoId") Long bancoId, @RequestBody BancoDto dto) {
+        return bancoService.actualizarBanco(bancoId, dto);
+    }
+
+    @DeleteMapping("/eliminar-banco/{bancoId}")
+    public ResponseDto eliminarBanco(@PathVariable(name = "bancoId") Long bancoId) {
+        return bancoService.eliminarBanco(bancoId);
+    }
 }
