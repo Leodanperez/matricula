@@ -25,6 +25,31 @@ public class BancoServiceImpl implements BancoService {
     @Override
     public ResponseDto crearBanco(BancoDto bancoDto) {
         var response = new ResponseDto();
+        StringBuilder errorMessage = new StringBuilder();
+
+        if (bancoDto == null) {
+            response.setStatus(422);
+            response.setMessage("Campos obligatorios");
+            return response;
+        }
+
+        if (bancoDto.getNombre() == null || bancoDto.getNombre().isEmpty()) {
+            errorMessage.append("El nombre el obligatorio. ");
+        }
+
+        if (bancoDto.getDireccion() == null || bancoDto.getDireccion().isEmpty()) {
+            errorMessage.append("La direccion es obligatorio. ");
+        }
+
+        if (bancoDto.getCodigo() == null || bancoDto.getCodigo().isEmpty()) {
+            errorMessage.append("El codigo es obligatorio. ");
+        }
+
+        if (!errorMessage.isEmpty()) {
+            response.setStatus(422);
+            response.setMessage(errorMessage.toString());
+            return response;
+        }
 
         try {
             Banco nuevoBanco = new Banco();
@@ -43,19 +68,6 @@ public class BancoServiceImpl implements BancoService {
     }
 
     @Override
-    public void actualizarBanco(Long id, BancoDto bancoDto) {
-        Optional<Banco> existeBanco = bancoRepository.findById(id);
-        if (existeBanco.isPresent()) {
-            existeBanco.get().setNombre(bancoDto.getNombre());
-            existeBanco.get().setDireccion(bancoDto.getDireccion());
-            existeBanco.get().setCodigo(bancoDto.getCodigo());
-        }
-
-
-        bancoRepository.save(existeBanco.get());
-    }
-
-    @Override
     public PaginatedResponseDto<Banco> obtenerBancos(String nombre, int page, int perPage) {
         Pageable pageable = PageRequest.of(page - 1, perPage);
         Page<Banco> bancosPage = bancoRepository
@@ -69,9 +81,21 @@ public class BancoServiceImpl implements BancoService {
         );
     }
 
+    @Override
+    public ResponseDto actualizarBanco(Long id, BancoDto bancoDto) {
+        var response = new ResponseDto();
+
+        try {
+            Optional<Banco> optionalBanco = bancoRepository.findById(id);
+        } catch (Exception e) {
+
+        }
+        return null;
+    }
 
     @Override
-    public boolean eliminarBanco(Long id) {
-        return false;
+    public ResponseDto eliminarBanco(Long id) {
+        return null;
     }
+
 }

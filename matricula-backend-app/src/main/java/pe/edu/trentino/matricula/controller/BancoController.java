@@ -13,6 +13,7 @@ import java.util.Collections;
 
 @RequiredArgsConstructor
 @RestController
+@CrossOrigin()
 public class BancoController {
 
     //Injeccion de dependencia

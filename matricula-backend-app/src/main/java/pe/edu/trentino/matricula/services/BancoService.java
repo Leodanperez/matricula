@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface BancoService {
     ResponseDto crearBanco(BancoDto bancoDto);
-    void actualizarBanco(Long id, BancoDto bancoDto);
     PaginatedResponseDto<Banco> obtenerBancos(String nombre, int page, int perPage);
-    boolean eliminarBanco(Long id);
+    ResponseDto actualizarBanco(Long id, BancoDto bancoDto);
+    ResponseDto eliminarBanco(Long id);
 }
