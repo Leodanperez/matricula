@@ -43,11 +43,14 @@ export default function Banco() {
   const [show, setShow] = useState<boolean>(false);
   const [esModoEditar, setEsModoEditar] = useState<boolean>(false);
   const [validated, setValidated] = useState<boolean>(false);
+  const [seleccionarBancoId, setSeleccionarBancoId] = useState<number | null>(
+    null
+  );
 
   const [listadoBancos, setListadoBancos] = useState<IBanco[] | null>(null);
   const [buscar, setBuscar] = useState<string>("");
   const [page, setPage] = useState<number>(1);
-  const [perPage] = useState<number>(5);
+  const [perPage, setPerPage] = useState<number>(5);
   const [total, setTotal] = useState<number>(0);
   const [lastPage, setLastPage] = useState<number>(1);
 
@@ -64,6 +67,7 @@ export default function Banco() {
     setShow(false);
     setEsModoEditar(false);
     setValidated(false);
+    setSeleccionarBancoId(null);
     setBanco({
       nombre: "",
       direccion: "",
@@ -119,11 +123,23 @@ export default function Banco() {
     }
     e.preventDefault();
     try {
-      const resultado = await fetchData<DtoResponse>("/crear-banco", {
-        method: "POST",
-        data: banco,
-      });
-      showToast({ message: resultado.message, type: "success" });
+      if (esModoEditar && seleccionarBancoId) {
+        const resultado = await fetchData<DtoResponse>(
+          `editar-banco/${seleccionarBancoId}`,
+          {
+            method: "PUT",
+            data: banco,
+          }
+        );
+        showToast({ message: resultado.message, type: "success" });
+      } else {
+        const resultado = await fetchData<DtoResponse>("/crear-banco", {
+          method: "POST",
+          data: banco,
+        });
+        showToast({ message: resultado.message, type: "success" });
+      }
+
       handleClose();
       obtenerListadoBancos(buscar, page);
     } catch (error) {
@@ -131,11 +147,27 @@ export default function Banco() {
     }
   };
 
+  const handlePerPage = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setPerPage(Number(e.target.value));
+    setPage(1);
+  };
+
   const handleShow = () => {
     setShow(true);
   };
 
-  const handleEliminar = async () => {
+  const handleEditar = (banco: IBanco) => {
+    setEsModoEditar(true);
+    setSeleccionarBancoId(banco.id);
+    setBanco({
+      nombre: banco.nombre,
+      direccion: banco.direccion,
+      codigo: banco.codigo,
+    });
+    setShow(true);
+  };
+
+  const handleEliminar = async (id: number) => {
     MySwal.fire({
       title: "¿Estás seguro de eliminar?",
       text: "No podrás revertir esto!",
@@ -147,7 +179,18 @@ export default function Banco() {
       cancelButtonText: "Cancelar",
     }).then(async (resultado) => {
       if (resultado.isConfirmed) {
-        showToast({ message: "Eliminado de forma correcta", type: "success" });
+        try {
+          const resultado = await fetchData<DtoResponse>(
+            `/eliminar-banco/${id}`,
+            {
+              method: "DELETE",
+            }
+          );
+          showToast({ message: resultado.message, type: "success" });
+          obtenerListadoBancos(buscar, page);
+        } catch (error) {
+          console.log(error);
+        }
       }
     });
   };
@@ -165,6 +208,16 @@ export default function Banco() {
           <FeatherIcon icon="plus" />
           Agregar Banco
         </Button>
+        <Form.Select
+          className="form-select-sm w-25"
+          value={perPage}
+          onChange={handlePerPage}
+        >
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </Form.Select>
         <Form.Control
           type="text"
           value={buscar}
@@ -201,13 +254,15 @@ export default function Banco() {
                     <Button
                       variant="primary-outline"
                       className="btn btn-outline-primary btn-sm"
+                      type="submit"
+                      onClick={() => handleEditar(banco)}
                     >
                       <FeatherIcon icon="edit-2" />
                     </Button>
                     <Button
                       variant="danger-outline"
                       className="btn btn-outline-danger btn-sm ms-2"
-                      onClick={handleEliminar}
+                      onClick={() => handleEliminar(banco.id)}
                     >
                       <FeatherIcon icon="trash" />
                     </Button>
@@ -307,7 +362,7 @@ export default function Banco() {
               Cerrar
             </Button>
             <Button variant="outline-primary" type="submit">
-              Guardar
+              {esModoEditar ? "Editar Banco" : "Agregar Banco"}
             </Button>
           </Modal.Footer>
         </Form>

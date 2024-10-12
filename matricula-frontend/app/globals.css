@@ -110,3 +110,7 @@
 .centered-cell {
   vertical-align: middle;
 }
+
+.w-25 {
+  width: 5% !important;
+}

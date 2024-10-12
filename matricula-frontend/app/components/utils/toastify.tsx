@@ -10,15 +10,18 @@ interface ToastOptions {
     | "bottom-left"
     | "bottom-center"
     | "bottom-right";
+  theme?: "light" | "dark" | "colored";
 }
 
 const showToast = ({
   message,
   type,
   position = "top-center",
+  theme = "colored",
 }: ToastOptions) => {
   toast[type](message, {
     position,
+    theme,
   });
 };
 
