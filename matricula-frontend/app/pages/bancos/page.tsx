@@ -106,7 +106,24 @@ export default function Banco() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setBanco({ ...banco, [name]: value.toUpperCase() });
+    const date = new Date();
+
+    const year = date.getFullYear().toString();
+    const day = date.getDate().toString();
+
+    let code = "";
+
+    if (name === "nombre") {
+      const bankCode = value
+        .split(" ")
+        .map((word) => word.charAt(0))
+        .join("")
+        .toUpperCase();
+
+      code = bankCode + day + year;
+    }
+
+    setBanco({ ...banco, [name]: value.toUpperCase(), codigo: code });
   };
 
   const handleGuardar = async (e: FormEvent<HTMLFormElement>) => {
@@ -137,7 +154,14 @@ export default function Banco() {
           method: "POST",
           data: banco,
         });
-        showToast({ message: resultado.message, type: "success" });
+
+        if (resultado.status === 422) {
+          showToast({ message: resultado.message, type: "error" });
+        } else if (resultado.status === 200) {
+          showToast({ message: resultado.message, type: "success" });
+        } else {
+          showToast({ message: resultado.message, type: "error" });
+        }
       }
 
       handleClose();
@@ -195,6 +219,36 @@ export default function Banco() {
     });
   };
 
+  const descarExcel = async () => {
+    try {
+      const resultado = await fetchData(`/exportar-excel`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/vnd.ms-excel",
+        },
+        responseType: "blob",
+      });
+
+      if (!resultado) {
+        showToast({ message: "Error al descargar el archivo", type: "error" });
+      }
+
+      //convertir la respuesta en un blob (archivo binarios)
+      const blob = new Blob([resultado], { type: "application/vnd.ms-excel" });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "bancos.xls";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      //showToast({ message: resultado.message, type: "success" });
+      obtenerListadoBancos(buscar, page);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <Breandcrumb titulo="Listado de bancos" />
@@ -225,6 +279,14 @@ export default function Banco() {
           className="form-control w-50"
           placeholder="Buscar bancos..."
         />
+        <Button
+          variant="warning-outline"
+          className="btn btn-outline-warning"
+          onClick={descarExcel}
+        >
+          <FeatherIcon icon="download" />
+          Descargar
+        </Button>
       </div>
 
       <div className="table-responsive">
@@ -346,6 +408,7 @@ export default function Banco() {
                 name="codigo"
                 value={banco.codigo}
                 onChange={handleChange}
+                disabled={true}
                 required
               />
               <Form.Control.Feedback type="invalid">
