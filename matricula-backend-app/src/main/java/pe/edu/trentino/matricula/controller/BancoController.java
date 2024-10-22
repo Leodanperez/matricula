@@ -1,5 +1,6 @@
 package pe.edu.trentino.matricula.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +10,7 @@ import pe.edu.trentino.matricula.response.PaginatedResponseDto;
 import pe.edu.trentino.matricula.response.ResponseDto;
 import pe.edu.trentino.matricula.services.BancoService;
 
+import java.io.IOException;
 import java.util.Collections;
 
 @RequiredArgsConstructor
@@ -43,5 +45,16 @@ public class BancoController {
     @DeleteMapping("/eliminar-banco/{bancoId}")
     public ResponseDto eliminarBanco(@PathVariable(name = "bancoId") Long bancoId) {
         return bancoService.eliminarBanco(bancoId);
+    }
+
+    @GetMapping("/exportar-excel")
+    public void exportarExcel(HttpServletResponse response) throws IOException {
+        bancoService.descargarBanco(response);
+    }
+
+    @PostMapping("/eliminar-todo")
+    public ResponseDto eliminarTodosBancos(@RequestBody Long bancoId) {
+        //bancoService.eliminarTodosBancos();
+        return new ResponseDto(200, "Todos los bancos han sido eliminados");
     }
 }

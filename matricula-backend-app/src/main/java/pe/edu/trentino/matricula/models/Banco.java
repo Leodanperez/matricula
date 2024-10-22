@@ -15,10 +15,10 @@ public class Banco {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 50)
+    @Column(length = 50, unique = true, nullable = false)
     private String nombre;
-    @Column(length = 100)
+    @Column(length = 100, nullable = false)
     private String direccion;
-    @Column(length = 20)
+    @Column(length = 20, nullable = false)
     private String codigo;
 }

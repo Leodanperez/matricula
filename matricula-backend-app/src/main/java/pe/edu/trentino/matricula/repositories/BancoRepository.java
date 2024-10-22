@@ -9,4 +9,5 @@ import java.util.Optional;
 
 public interface BancoRepository extends JpaRepository<Banco, Long> {
     Page<Banco> findByNombreContainingIgnoreCase(String nombre, Pageable pageable);
+    Optional<Banco> findByNombre(String nombre);
 }
