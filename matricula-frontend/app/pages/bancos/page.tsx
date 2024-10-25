@@ -53,6 +53,10 @@ export default function Banco() {
   const [perPage, setPerPage] = useState<number>(5);
   const [total, setTotal] = useState<number>(0);
   const [lastPage, setLastPage] = useState<number>(1);
+  const [selectedBanco, setSelectedBanco] = useState<{
+    [key: number]: boolean;
+  }>({});
+  const [selectAll, setSelectAll] = useState<boolean>(false);
 
   const [banco, setBanco] = useState({
     nombre: "",
@@ -111,7 +115,7 @@ export default function Banco() {
     const year = date.getFullYear().toString();
     const day = date.getDate().toString();
 
-    let code = "";
+    let code = banco.codigo;
 
     if (name === "nombre") {
       const bankCode = value
@@ -249,6 +253,31 @@ export default function Banco() {
     }
   };
 
+  const handleSeleccionarTodoChange = () => {
+    const newSelectAll = !selectAll;
+    setSelectAll(newSelectAll);
+
+    // Crear un nuevo objeto de los bancos seleccionados
+    const newSelectedBancos = listadoBancos?.reduce((acc, banco) => {
+      acc[banco.id] = newSelectAll;
+      return acc;
+    }, {} as { [key: number]: boolean });
+
+    const data = [21, 23, 23, 33];
+
+    console.log();
+
+    setSelectedBanco(newSelectedBancos);
+  };
+
+  //Manejar el checkbox individual
+  const handleCheckboxChange = (bancoId: number) => {
+    setSelectedBanco((prev) => ({
+      ...prev,
+      [bancoId]: !prev[bancoId],
+    }));
+  };
+
   return (
     <>
       <Breandcrumb titulo="Listado de bancos" />
@@ -293,7 +322,14 @@ export default function Banco() {
         <Table className="table table-bordered border-dark">
           <thead>
             <tr>
-              <th scope="col">#</th>
+              <th scope="col" className="centered-cell">
+                <Form.Check
+                  type="checkbox"
+                  id="selected-all"
+                  checked={selectAll}
+                  onChange={handleSeleccionarTodoChange}
+                />
+              </th>
               <th scope="col">BANCO</th>
               <th scope="col">DIRECCIÓN</th>
               <th scope="col">CÓDIGO</th>
@@ -307,7 +343,12 @@ export default function Banco() {
               listadoBancos.map((banco, index) => (
                 <tr key={banco.id}>
                   <td className="centered-cell">
-                    {(page - 1) * perPage + index + 1}
+                    <Form.Check
+                      type="checkbox"
+                      id={`checkbox-${banco.id}`}
+                      checked={!!selectedBanco[banco.id]}
+                      onChange={() => handleCheckboxChange(banco.id)}
+                    />
                   </td>
                   <td className="centered-cell">{banco.nombre}</td>
                   <td className="centered-cell">{banco.direccion}</td>
