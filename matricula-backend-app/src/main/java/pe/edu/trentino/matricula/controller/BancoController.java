@@ -54,6 +54,7 @@ public class BancoController {
 
     @PostMapping("/eliminar-todo")
     public ResponseDto eliminarTodosBancos(@RequestBody Long bancoId) {
+        var banco = "12,23,34";
         //bancoService.eliminarTodosBancos();
         return new ResponseDto(200, "Todos los bancos han sido eliminados");
     }
