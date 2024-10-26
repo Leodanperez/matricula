@@ -11,19 +11,16 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Entity
-@Table(name = "bancos")
-public class Banco {
+@Table(name = "niveles_educativos")
+public class NivelEducativo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(length = 50, unique = true, nullable = false)
     private String nombre;
-    @Column(length = 100, nullable = false)
-    private String direccion;
-    @Column(length = 20, nullable = false)
-    private String codigo;
 
-    @OneToMany(mappedBy = "banco")
-    private List<Pago> pagos;
+    @OneToMany(mappedBy = "nivel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Matricula> matriculas;
+
+    @OneToMany(mappedBy = "nivel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Grado> grados;
 }

@@ -11,19 +11,17 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Entity
-@Table(name = "bancos")
-public class Banco {
+@Table(name = "grados")
+public class Grado {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(length = 50, unique = true, nullable = false)
     private String nombre;
-    @Column(length = 100, nullable = false)
-    private String direccion;
-    @Column(length = 20, nullable = false)
-    private String codigo;
 
-    @OneToMany(mappedBy = "banco")
-    private List<Pago> pagos;
+    @OneToMany(mappedBy = "grado", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Matricula> matriculas;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "nivel_id", nullable = false)
+    private NivelEducativo nivel;
 }
