@@ -57,4 +57,11 @@ public class MatriculaServiceImpl implements MatriculaService {
         }
         return response;
     }
+
+
+    private String generarCodigoMatricula(String nombre, String apellidos, String dni, int anio) {
+        String inicialNombre = !nombre.isEmpty() ? nombre.substring(0, 1).toUpperCase() : "";
+        String inicialApellido = !apellidos.isEmpty() ? apellidos.split(" ")[0].substring(0, 1).toUpperCase() : "";
+        return inicialNombre + inicialApellido + dni + anio;
+    }
 }
