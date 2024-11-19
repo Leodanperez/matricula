@@ -225,7 +225,7 @@ export default function Banco() {
 
   const descarExcel = async () => {
     try {
-      const resultado = await fetchData(`/exportar-excel`, {
+      const resultado = await fetchData<any>(`/exportar-excel`, {
         method: "GET",
         headers: {
           "Content-Type": "application/vnd.ms-excel",
