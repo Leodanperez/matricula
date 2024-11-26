@@ -23,4 +23,8 @@ public class NivelEducativo {
 
     @OneToMany(mappedBy = "nivel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Grado> grados;
+
+    public NivelEducativo(String nombre) {
+        this.nombre = nombre;
+    }
 }

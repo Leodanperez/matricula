@@ -24,4 +24,9 @@ public class Grado {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "nivel_id", nullable = false)
     private NivelEducativo nivel;
+
+    public Grado(String nombre, NivelEducativo nivel) {
+        this.nombre = nombre;
+        this.nivel = nivel;
+    }
 }

@@ -24,4 +24,8 @@ public class Seccion {
             fetch = FetchType.LAZY
     )
     private List<Matricula> matriculas;
+
+    public Seccion(String nombre) {
+        this.nombre = nombre;
+    }
 }
